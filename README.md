@@ -1,8 +1,8 @@
 # Disaster Response Pipeline Project
 
 ### What is about this project:
-[Figure Eight](https://appen.com/) has collaborated with Udacity to develop the data engineering skills to provide a service which can be 
-useful to classify a message written during a disaster in 36 possible categories through a machine learning model
+[Figure Eight](https://appen.com/) has collaborated with Udacity to develop some data engineering skills to provide a service which can be 
+useful to classify messages written during a disaster in 36 possible categories through a machine learning model
 and send some messages to the respective disaster relief agency.
 
 In these files you can find some of the resources to build that web page and prove with some aditional data about how is the performance of the model in the classification task.

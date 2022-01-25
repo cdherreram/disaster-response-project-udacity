@@ -32,17 +32,37 @@ def load_data(database_filepath):
             database_filepath - string - path to file
             
         OUTPUT -
-            X,y - pandas dataframe - data to 
+            X,y - pandas dataframe - data to train the model
+	    category_names - list - names for categories in the model 
     """
+    # Create engine
     engine = create_engine('sqlite:///'+ database_filepath)
+
+    # Read the data from SQLite database
     df = pd.read_sql_table('MessageCategories',engine)
+
+    # Split the data in inputs and outputs
     X = df['message']
     y = df.loc[:,'related':'direct_report']
+
+    # Return the category names to the 36 categories
     category_names = y.columns.tolist()
     return X, y, category_names
 
 
 def tokenize(text):
+     """
+	Tokenize the data, converting each message in a list of words lemmatizzed
+	and stemmed after remove all stopwords in the message.
+
+	INPUT -
+	    text - string - message to be classified
+
+	OUTPUT -
+	    stemmed - list - list of words after all procces to treat with text 
+	    (stemmatization, lemmatization, remove stopwords)
+     """
+
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     words = text.split()
     words = [w for w in words if w not in stopwords.words("english")]
@@ -56,6 +76,15 @@ def tokenize(text):
 
 
 def build_model():
+    """
+	Build the pipeline, determine the parameters to evaluate as hyperparameters
+	and select the Grid Search with cross-validation to evaluate the model
+
+	OUTPUT -
+	    GridSearchCV - cross-validation technique to select the model according
+	    to hyperparameter evaluation.
+
+    """
     
     # Build pipeline
     pipe = Pipeline([
@@ -76,10 +105,19 @@ def build_model():
     # BUild a grid with cross-validation
     return GridSearchCV(pipe, parameters, verbose=1)
     
-    
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+	Fit and predict the output to the model and show a brief  summary of the results
+
+	INPUT -
+	    model - GridSearchCV - model to be fitted
+	    X_test, Y_test - pandas dataframe - Data with text messages and category
+						to evaluate the model performance
+	    category_names - list - List of names to each category to be predicted in the model
+
+    """
     Y_pred = model.predict(X_test)
     print('REPORT BY COLUMN:')
     for i in range(Y_test.shape[1]):
