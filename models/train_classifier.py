@@ -130,6 +130,14 @@ def evaluate_model(model, X_test, Y_test, category_names):
         )
     
 def save_model(model, model_filepath):
+    """
+	Save model as file joblib. 
+
+	INPUTS -
+	    model - GridSearchCV - Fitted model with Grid search
+	    model_filepath - string - Path to save the file, including the name of file with .pkl extension
+    """
+
     dump(model, model_filepath)
 
 
