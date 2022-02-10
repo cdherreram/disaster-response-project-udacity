@@ -63,16 +63,16 @@ def tokenize(text):
 	    (stemmatization, lemmatization, remove stopwords)
      """
 
-    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
-    words = text.split()
-    words = [w for w in words if w not in stopwords.words("english")]
+     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+     words = text.split()
+     words = [w for w in words if w not in stopwords.words("english")]
 
     # Reduce words to their root form
-    lemmed = [WordNetLemmatizer().lemmatize(w) for w in words]
-    
+     lemmed = [WordNetLemmatizer().lemmatize(w) for w in words]
+
     # Reduce words to their stems
-    stemmed = [PorterStemmer().stem(w) for w in lemmed]
-    return stemmed
+     stemmed = [PorterStemmer().stem(w) for w in lemmed]
+     return stemmed
 
 
 def build_model():

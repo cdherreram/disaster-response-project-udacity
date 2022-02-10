@@ -5,24 +5,44 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    """
+	Load the data from .csv files (messages and categories) and return a
+	merged table.
+
+	INPUTS -
+	    messages_filepath - string - Path file to messsages file with .csv extension
+	    categories_filepath - string - Path file to categories file with .csv extension
+    """
+
+    # Load the data
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
+
+    # Merge the info on id column
     df = messages.merge(categories, on = 'id')
     return df
 
+
 def clean_data(df):
+    """
+	Clean the categories column and report each value for category in a final dataframe
+
+	INPUTS -
+	    
+    """
+
     categories = df['categories'].str.split(';', expand=True)
     row = categories.iloc[1,:]
     category_colnames = row.apply(lambda x: x.split('-')[0])
     categories.columns = category_colnames
-    
+
     for column in categories:
         # set each value to be the last character of the string
         categories[column] = categories[column].apply(lambda x: x.split('-')[1])
 
         # convert column from string to numeric
         categories[column] = categories[column].astype(np.number)
-        
+
     df.drop('categories', axis = 1, inplace=True)
     df = pd.concat([df, categories], axis = 1)
     df.drop_duplicates(inplace=True)
