@@ -43,6 +43,8 @@ def clean_data(df):
         # convert column from string to numeric
         categories[column] = categories[column].astype(np.number)
 
+        categories.loc[categories[column] > 1, column] = 1
+
     df.drop('categories', axis = 1, inplace=True)
     df = pd.concat([df, categories], axis = 1)
     df.drop_duplicates(inplace=True)
@@ -50,7 +52,7 @@ def clean_data(df):
 
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///' + database_filename)
-    df.to_sql('MessageCategories', engine, index=False)
+    df.to_sql('MessageCategories', engine, index=False, if_exists = 'replace')
 
 
 def main():
