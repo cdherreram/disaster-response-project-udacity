@@ -2,8 +2,10 @@ import json
 import plotly
 import pandas as pd
 
+import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+nltk.download('punkt')
 
 from flask import Flask
 from flask import render_template, request, jsonify
@@ -38,33 +40,61 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
+    graphs = []
+
+
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
-    graphs = [
-        {
-            'data': [
-                Bar(
-                    x=genre_names,
-                    y=genre_counts
-                )
-            ],
 
-            'layout': {
-                'title': 'Distribution of Message Genres',
-                'yaxis': {
-                    'title': "Count"
-                },
-                'xaxis': {
-                    'title': "Genre"
+    graph_1 = {
+		'data': [
+                	Bar(
+	                    	x=genre_names,
+        	            	y=genre_counts
+                	)
+            	],
+
+            	'layout': {
+                	'title': 'Distribution of Message Genres',
+	                'yaxis': {
+	                    'title': "Count"
+	                },
+	                'xaxis': {
+	                    'title': "Genre"
+	                }
+        	    }
+	        }
+    # add to the graphs list
+    graphs.append(graph_1)
+
+    request_mean = df.groupby('request').mean()['search_and_rescue']
+    request_names = list(request_mean.index)
+
+    graph_2 = {
+                'data': [
+                        Bar(
+                	        x=request_names,
+                        	y=request_mean
+                        )
+                ],
+                'layout': {
+                        'title': 'Distribution of Search and Rescue by Request',
+                        'yaxis': {
+                            'title': "Mean"
+                        },
+                        'xaxis': {
+                            'title': "Request"
+                        }
+                    }
                 }
-            }
-        }
-    ]
-    
+
+    graphs.append(graph_2)
+
+
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
